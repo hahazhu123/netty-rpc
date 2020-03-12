@@ -2,9 +2,9 @@ package com.qxgcloud.rpc.client.component;
 
 import com.alibaba.fastjson.JSONObject;
 import com.qxgcloud.rpc.client.handler.SimpleClientHandler;
-import com.qxgcloud.rpc.common.message.rpc.RpcMessageFuture;
-import com.qxgcloud.rpc.common.message.rpc.RpcRequest;
-import com.qxgcloud.rpc.common.message.rpc.RpcResponse;
+import com.qxgcloud.rpc.common.core.RpcMessageFuture;
+import com.qxgcloud.rpc.common.core.RpcRequest;
+import com.qxgcloud.rpc.common.core.RpcResponse;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;

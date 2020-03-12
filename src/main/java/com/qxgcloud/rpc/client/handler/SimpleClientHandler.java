@@ -1,8 +1,8 @@
 package com.qxgcloud.rpc.client.handler;
 
 import com.alibaba.fastjson.JSONObject;
-import com.qxgcloud.rpc.common.message.rpc.RpcMessageFuture;
-import com.qxgcloud.rpc.common.message.rpc.RpcResponse;
+import com.qxgcloud.rpc.common.core.RpcMessageFuture;
+import com.qxgcloud.rpc.common.core.RpcResponse;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.timeout.IdleState;

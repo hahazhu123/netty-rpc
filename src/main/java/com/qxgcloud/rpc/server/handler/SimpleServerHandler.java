@@ -1,8 +1,9 @@
 package com.qxgcloud.rpc.server.handler;
 
 import com.alibaba.fastjson.JSONObject;
-import com.qxgcloud.rpc.common.message.rpc.RpcRequest;
-import com.qxgcloud.rpc.common.message.rpc.RpcResponse;
+import com.qxgcloud.rpc.common.core.RpcRequest;
+import com.qxgcloud.rpc.common.core.RpcResponse;
+import com.qxgcloud.rpc.server.component.ServiceAgency;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.timeout.IdleState;
@@ -20,19 +21,13 @@ public class SimpleServerHandler extends ChannelInboundHandlerAdapter {
 
   @Override
   public void channelRead(ChannelHandlerContext ctx, Object msg) {
-//    System.out.println("收到客户端(" + ctx.channel().remoteAddress() + ")消息:" + msg.toString());
-//    ctx.channel().writeAndFlush("is ok\r\n");
     if ("ping".equals(msg)) {
       return;
     }
-
     System.out.println("收到客户端(" + ctx.channel().remoteAddress() + ")消息:" + msg.toString());
-    RpcRequest request = JSONObject.parseObject(msg.toString(), RpcRequest.class);
-    // TODO 执行逻辑
-    RpcResponse response = new RpcResponse();
-    response.setRpcId(request.getRpcId());
-    response.setContent("is ok");
-    ctx.channel().writeAndFlush(JSONObject.toJSONString(response));
+    RpcRequest rpcRquest = JSONObject.parseObject(msg.toString(), RpcRequest.class);
+    RpcResponse rpcResponse = ServiceAgency.process(rpcRquest);
+    ctx.channel().writeAndFlush(JSONObject.toJSONString(rpcResponse));
     ctx.channel().writeAndFlush("\r\n");
   }
 
