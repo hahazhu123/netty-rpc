@@ -20,8 +20,8 @@ public class RpcClientTest {
     @Test
     public void testRequest() {
         User user = new User();
-        user.setName("admin1");
-        user.setPassword("admin1");
+        user.setName("admin");
+        user.setPassword("admin");
         User admin = userService.login(user);
         System.out.println(admin);
     }

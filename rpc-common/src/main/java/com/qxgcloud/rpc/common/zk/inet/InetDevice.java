@@ -1,4 +1,4 @@
-package com.qxgcloud.rpc.server.zk.inet;
+package com.qxgcloud.rpc.common.zk.inet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

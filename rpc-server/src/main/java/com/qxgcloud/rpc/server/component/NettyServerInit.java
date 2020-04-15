@@ -1,8 +1,10 @@
 package com.qxgcloud.rpc.server.component;
 
+import com.qxgcloud.rpc.common.zk.NettyServerZkClient;
 import com.qxgcloud.rpc.server.handler.SimpleServerHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
+import io.netty.channel.nio.NioEventLoop;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
@@ -36,6 +38,8 @@ public class NettyServerInit implements ApplicationListener<ContextStartedEvent>
     // 初始化netty server
     EventLoopGroup bossGroup = new NioEventLoopGroup(1);
     EventLoopGroup workerGroup = new NioEventLoopGroup(4);
+    // 用于处理逻辑的线程池，是百万并发实现几十毫秒响应的关键
+    EventLoopGroup serviceGroup = new NioEventLoopGroup(4);
     try {
       ServerBootstrap bootstrap = new ServerBootstrap();
       bootstrap.group(bossGroup,  workerGroup)
@@ -48,15 +52,15 @@ public class NettyServerInit implements ApplicationListener<ContextStartedEvent>
                   pipeline.addLast(new DelimiterBasedFrameDecoder(65535, Delimiters.lineDelimiter()));
                   pipeline.addLast(new StringDecoder());
                   pipeline.addLast(new IdleStateHandler(0, 0, 5, TimeUnit.SECONDS));
-                  pipeline.addLast(new SimpleServerHandler());
+                  pipeline.addLast(serviceGroup, new SimpleServerHandler());
                   pipeline.addLast(new StringEncoder());
                 }
               });
 
       ChannelFuture future = bootstrap.bind(address, port).sync();
       //将当前机器注册到zookeeper中
-//      NettyServerZkClient zkClient = new NettyServerZkClient();
-//      zkClient.register(InetAddressType.VMnet8);
+      NettyServerZkClient zkClient = new NettyServerZkClient();
+      zkClient.register(address, port);
 
       logger.info("NettyRpcServerInit is starting...");
       future.channel().closeFuture().sync();

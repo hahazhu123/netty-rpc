@@ -1,4 +1,4 @@
-package com.qxgcloud.rpc.server.zk.inet;
+package com.qxgcloud.rpc.common.zk.inet;
 
 public enum InetAddressType {
   LOCAL("local"),

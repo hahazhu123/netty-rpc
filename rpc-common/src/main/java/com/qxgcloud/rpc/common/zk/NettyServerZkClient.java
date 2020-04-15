@@ -1,21 +1,24 @@
-package com.qxgcloud.rpc.server.zk;
+package com.qxgcloud.rpc.common.zk;
 
-import com.qxgcloud.rpc.server.zk.inet.InetAddressType;
-import com.qxgcloud.rpc.server.zk.inet.InetDevice;
-import org.apache.curator.framework.CuratorFramework;
+
+import com.qxgcloud.rpc.common.zk.inet.InetAddressType;
+import com.qxgcloud.rpc.common.zk.inet.InetDevice;
 import org.apache.zookeeper.CreateMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.stereotype.Component;
 
 import java.net.InetAddress;
+import java.util.List;
 
 /**
  * Netty Server 注册到 ZK 的客户端工具
  */
+@Component
+@DependsOn("zkFactory")
 public class NettyServerZkClient extends AbstractZkClient {
   private static final Logger logger = LoggerFactory.getLogger(NettyServerZkClient.class);
-
-  private CuratorFramework client;
 
   public NettyServerZkClient() {
     super();
@@ -25,6 +28,7 @@ public class NettyServerZkClient extends AbstractZkClient {
     super(connAddress);
   }
 
+  @Deprecated
   public void register(InetAddressType inetAddressType) {
     checkNettyServerNodeExists();
 
@@ -40,8 +44,21 @@ public class NettyServerZkClient extends AbstractZkClient {
       throw new RuntimeException("not found InetAddress for " + inetAddressType.getType());
     }
     String path = Constants.NETTY_SERVER + "/" + inetAddress.getHostAddress();
+    // 短暂（ephemeral）：客户端和服务器端断开连接后，创建的节点自己删除
     createNode(CreateMode.EPHEMERAL, path, new byte[0]);
     logger.info("register netty server:" + inetAddress.getHostAddress() + " to zookeeper successfully");
+  }
+
+  public void register(String serverAddress, Integer port) {
+    checkNettyServerNodeExists();
+    String path = Constants.NETTY_SERVER + "/" + serverAddress + ":" + port;
+    // 短暂（ephemeral）：客户端和服务器端断开连接后，创建的节点自己删除
+    createNode(CreateMode.EPHEMERAL, path, new byte[0]);
+    logger.info("register netty server:" + serverAddress + " to zookeeper successfully");
+  }
+
+  public List<String> getServers() {
+    return getChildren(Constants.NETTY_SERVER);
   }
 
   private void checkNettyServerNodeExists() {
@@ -53,8 +70,8 @@ public class NettyServerZkClient extends AbstractZkClient {
 
 
 
-  public static void main(String[] args) {
-    NettyServerZkClient zkClient = new NettyServerZkClient();
-    zkClient.register(InetAddressType.VMnet8);
+  public static void main(String[] args) throws Exception {
+    NettyServerZkClient zkClient = new NettyServerZkClient("192.168.101.1:2181");
+
   }
 }
