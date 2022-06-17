@@ -24,7 +24,7 @@
     <springfromework.version>5.2.2.RELEASE</springfromework.version>
     <netty.version>4.1.43.Final</netty.version>
     <curator.version>4.2.0</curator.version>
-    <fastjson.version>1.2.62</fastjson.version>
+    <fastjson.version>1.2.83</fastjson.version>
     <commons-lang3.version>3.9</commons-lang3.version>
     <junit.version>4.12</junit.version>
     <logback.version>1.2.3</logback.version>
